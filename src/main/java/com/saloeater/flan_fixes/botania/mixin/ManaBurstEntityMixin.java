@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -36,20 +37,11 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
     private UUID ownerID;
     private BlockPos pos;
 
-    @Inject(method = "onHitBlock", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "onHitBlock", at = @At("HEAD"), cancellable = true, remap = false)
     private void canLensHitBlock(BlockHitResult hit, CallbackInfo info) {
         this.pos = hit.getBlockPos();
-        var canHit = true;
-        var entity = (ManaBurstEntity) (Object) this;
-        var onlinePlayer = this.lookupOwner(entity.level(), ownerID);
-        if (onlinePlayer != null) {
-            entity.setOwner(onlinePlayer);
-            canHit = BotaniaCompat.canLensProjectileHit(entity, this.pos);
-        } else {
-            canHit = this.evaluateOfflinePlayer(entity.level(), this.pos, ownerID);
-        }
 
-        if (!canHit) {
+        if (!canLensHit(this.pos)) {
             info.cancel();
         }
     }
@@ -57,34 +49,27 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
 
     @Inject(method = "onHitEntity", at = @At("HEAD"), cancellable = true, remap = false)
     private void canLensHitEntity(EntityHitResult hit, CallbackInfo info) {
+        this.pos = hit.getEntity().getOnPos();
 
+        if (!canLensHit(this.pos)) {
+            info.cancel();
+        }
     }
 
-    @Inject(method = "onHitCommon", at = @At("HEAD"), cancellable = true, remap = false)
-    private void canLensHit(HitResult hit, boolean shouldKill, CallbackInfo info) {
-        if (hit.getType() == HitResult.Type.BLOCK) {
-            this.pos = ((BlockHitResult) hit).getBlockPos();
-        } else if (hit.getType() == HitResult.Type.ENTITY) {
-            this.pos = ((EntityHitResult) hit).getEntity().getOnPos();
-        } else {
-            this.pos = null;
-        }
-
+    private boolean canLensHit(BlockPos pos) {
         var canHit = true;
-        if (this.pos != null) {
+        if (pos != null) {
             var entity = (ManaBurstEntity) (Object) this;
             var onlinePlayer = this.lookupOwner(entity.level(), ownerID);
             if (onlinePlayer != null) {
                 entity.setOwner(onlinePlayer);
-                canHit = BotaniaCompat.canLensProjectileHit(entity, this.pos);
+                canHit = BotaniaCompat.canLensProjectileHit(entity, pos);
             } else {
-                canHit = this.evaluateOfflinePlayer(entity.level(), this.pos, ownerID);
+                canHit = this.evaluateOfflinePlayer(entity.level(), pos, ownerID);
             }
         }
 
-        if (!canHit) {
-            info.cancel();
-        }
+        return canHit;
     }
 
     private boolean evaluateOfflinePlayer(Level level, BlockPos blockPos, UUID ownerID) {
