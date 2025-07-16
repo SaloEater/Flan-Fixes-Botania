@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,6 +35,30 @@ import static com.saloeater.flan_fixes.botania.BotaniaCompat.PROJECTILE;
 public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
     private UUID ownerID;
     private BlockPos pos;
+
+    @Inject(method = "onHitBlock", at = @At("HEAD"), cancellable = true)
+    private void canLensHitBlock(BlockHitResult hit, CallbackInfo info) {
+        this.pos = hit.getBlockPos();
+        var canHit = true;
+        var entity = (ManaBurstEntity) (Object) this;
+        var onlinePlayer = this.lookupOwner(entity.level(), ownerID);
+        if (onlinePlayer != null) {
+            entity.setOwner(onlinePlayer);
+            canHit = BotaniaCompat.canLensProjectileHit(entity, this.pos);
+        } else {
+            canHit = this.evaluateOfflinePlayer(entity.level(), this.pos, ownerID);
+        }
+
+        if (!canHit) {
+            info.cancel();
+        }
+    }
+
+
+    @Inject(method = "onHitEntity", at = @At("HEAD"), cancellable = true, remap = false)
+    private void canLensHitEntity(EntityHitResult hit, CallbackInfo info) {
+
+    }
 
     @Inject(method = "onHitCommon", at = @At("HEAD"), cancellable = true, remap = false)
     private void canLensHit(HitResult hit, boolean shouldKill, CallbackInfo info) {
