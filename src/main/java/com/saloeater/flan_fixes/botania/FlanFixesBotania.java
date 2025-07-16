@@ -19,10 +19,11 @@ public class FlanFixesBotania
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public FlanFixesBotania(FMLJavaModLoadingContext context)
+    public FlanFixesBotania( )
     {
-        // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
+        var forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.addListener(OnPlayerInteract::onPlayerInteract);
+        forgeBus.register(this);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

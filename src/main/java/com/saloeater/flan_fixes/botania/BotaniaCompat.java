@@ -9,14 +9,14 @@ import net.minecraft.world.phys.HitResult;
 import vazkii.botania.common.entity.ManaBurstEntity;
 
 public class BotaniaCompat {
-    public static final ResourceLocation PROJECTILE = ResourceLocation.fromNamespaceAndPath(FlanFixesBotania.MODID, "PROJECTILE");
+    public static final ResourceLocation PROJECTILE = new ResourceLocation(FlanFixesBotania.MODID, "lens_projectile");
 
-    public static boolean canLensProjectileHit(ManaBurstEntity burst, HitResult hit) {
+    public static boolean canLensProjectileHit(ManaBurstEntity burst, BlockPos blockPos) {
         var owner = burst.getOwner();
         if (!(owner instanceof ServerPlayer)) {
-            return false;
+            return true;
         }
 
-        return ClaimHandler.canInteract((ServerPlayer) owner, new BlockPos(new Vec3i((int) hit.getLocation().x, (int) hit.getLocation().y, (int) hit.getLocation().z)), PROJECTILE);
+        return ClaimHandler.canInteract((ServerPlayer) owner, blockPos, PROJECTILE);
     }
 }

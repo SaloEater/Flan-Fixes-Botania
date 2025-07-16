@@ -1,0 +1,9 @@
+{
+"id": "flan_fixes_botania",
+    "pack": {
+        "description": {
+            "translate": "Flan fixes"
+        },
+        "pack_format": 81
+    }
+}
