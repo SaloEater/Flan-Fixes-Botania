@@ -6,7 +6,6 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -19,9 +18,11 @@ public class FlanFixesBotania
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public FlanFixesBotania(FMLJavaModLoadingContext context)
+    public FlanFixesBotania()
     {
+        IEventBus forge = MinecraftForge.EVENT_BUS;
         // Register ourselves for server and other game events we are interested in
+        forge.addListener(EntityInteractEvents::projectileHit);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

@@ -18,7 +18,7 @@ public class PermissionGen extends ClaimPermissionProvider {
     protected void add() {
         BuiltinPermission.DATAGEN_DATA.forEach(this::addPermission);
         this.addPermission(BotaniaCompat.PROJECTILE, new ClaimPermission.Builder(
-                new ClaimPermission.Builder.ItemStackHolder(ResourceLocation.parse("botania:lens_normal")),
+                new ClaimPermission.Builder.ItemStackHolder(ResourceLocation.fromNamespaceAndPath(FlanFixesBotania.MODID, "lens_projectile")),
                 false, false, BuiltinPermission.order++, "botania",
                 List.of("Gives permission to botania lenses to active their projectile hit functionality.")));
     }

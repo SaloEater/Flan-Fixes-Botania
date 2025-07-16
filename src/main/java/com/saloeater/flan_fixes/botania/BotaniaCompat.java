@@ -9,7 +9,7 @@ import net.minecraft.world.phys.HitResult;
 import vazkii.botania.common.entity.ManaBurstEntity;
 
 public class BotaniaCompat {
-    public static final ResourceLocation PROJECTILE = ResourceLocation.fromNamespaceAndPath(FlanFixesBotania.MODID, "PROJECTILE");
+    public static final ResourceLocation PROJECTILE = new ResourceLocation(FlanFixesBotania.MODID, "lens_projectile");
 
     public static boolean canLensProjectileHit(ManaBurstEntity burst, HitResult hit) {
         var owner = burst.getOwner();
