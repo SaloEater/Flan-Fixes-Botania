@@ -14,16 +14,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import vazkii.botania.common.entity.ManaBurstEntity;
 
@@ -32,37 +30,44 @@ import java.util.UUID;
 
 import static com.saloeater.flan_fixes.botania.BotaniaCompat.PROJECTILE;
 
-@Mixin(ManaBurstEntity.class)
-public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
-    private UUID ownerID;
-    private BlockPos pos;
+@Mixin(value = ManaBurstEntity.class, remap = false)
+public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedByPlayer {
+    public UUID ownerID;
+    public BlockPos pos;
 
-    @Inject(method = "onHitBlock", at = @At("HEAD"), cancellable = true, remap = false)
-    private void canLensHitBlock(BlockHitResult hit, CallbackInfo info) {
+    protected ManaBurstEntityMixin(EntityType<? extends ThrowableProjectile> p_37466_, Level p_37467_) {
+        super(p_37466_, p_37467_);
+    }
+
+    @Override
+    protected void onHitBlock(BlockHitResult hit) {
         this.pos = hit.getBlockPos();
 
         if (!canLensHit(this.pos)) {
-            info.cancel();
+            return;
         }
+
+        super.onHitBlock(hit);
     }
 
-
-    @Inject(method = "onHitEntity", at = @At("HEAD"), cancellable = true, remap = false)
-    private void canLensHitEntity(EntityHitResult hit, CallbackInfo info) {
+    @Override
+    protected void onHitEntity(EntityHitResult hit) {
         this.pos = hit.getEntity().getOnPos();
 
         if (!canLensHit(this.pos)) {
-            info.cancel();
+            return;
         }
+        super.onHitEntity(hit);
     }
 
-    private boolean canLensHit(BlockPos pos) {
+    public boolean canLensHit(BlockPos pos) {
         var canHit = true;
         if (pos != null) {
             var entity = (ManaBurstEntity) (Object) this;
-            var onlinePlayer = this.lookupOwner(entity.level(), ownerID);
-            if (onlinePlayer != null) {
-                entity.setOwner(onlinePlayer);
+
+            var serverPlayer = this.lookupOwner(entity.level(), ownerID);
+            if (serverPlayer != null) {
+                entity.setOwner(serverPlayer);
                 canHit = BotaniaCompat.canLensProjectileHit(entity, pos);
             } else {
                 canHit = this.evaluateOfflinePlayer(entity.level(), pos, ownerID);
@@ -72,7 +77,7 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
         return canHit;
     }
 
-    private boolean evaluateOfflinePlayer(Level level, BlockPos blockPos, UUID ownerID) {
+    public boolean evaluateOfflinePlayer(Level level, BlockPos blockPos, UUID ownerID) {
         if (!(level instanceof ServerLevel world)) {
             return true;
         }
@@ -90,16 +95,12 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
         return getClaimPermission(claim, ownerID, storage, world);
     }
 
-    private boolean getGlobalClaimPermission(GlobalClaim claim, UUID ownerID, ClaimStorage storage, ServerLevel serverLevel) {
+    public boolean getGlobalClaimPermission(GlobalClaim claim, UUID ownerID, ClaimStorage storage, ServerLevel serverLevel) {
         Config.GlobalType global = ConfigHandler.CONFIG.getGlobal(serverLevel, PROJECTILE);
-        if (global == Config.GlobalType.NONE || global.getValue()) {
-            return true;
-        }
-
-        return false;
+        return global == Config.GlobalType.NONE || global.getValue();
     }
 
-    private boolean getClaimPermission(Claim claim, UUID ownerID, ClaimStorage storage, ServerLevel world) {
+    public boolean getClaimPermission(Claim claim, UUID ownerID, ClaimStorage storage, ServerLevel world) {
         if (ownerID == null || claim.getOwner().equals(ownerID) || claim.getAllowedFakePlayerUUID().contains(ownerID.toString())) {
             return true;
         }
@@ -119,11 +120,7 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
 
             do {
                 if (!subClaims.hasNext()) {
-                    if (this.claimHasPerm(claim, perm)) {
-                        return true;
-                    }
-
-                    return false;
+                    return this.claimHasPerm(claim, perm);
                 }
 
                 claim = (Claim) subClaims.next();
@@ -156,7 +153,7 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
         return this.claimHasPerm(claim, perm);
     }
 
-    private boolean claimHasPerm(Claim claim, ResourceLocation perm) {
+    public boolean claimHasPerm(Claim claim, ResourceLocation perm) {
         if (claim.parentClaim() == null) {
             return claim.permEnabled(perm) == 1;
         } else if (claim.permEnabled(perm) == -1) {
@@ -165,7 +162,11 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
         return claim.permEnabled(perm) == 1;
     }
 
-    private ServerPlayer lookupOwner(Level level, UUID ownerID) {
+    public ServerPlayer lookupOwner(Level level, UUID ownerID) {
+        if (this.getOwner() != null && this.getOwner() instanceof ServerPlayer serverPlayer) {
+            return serverPlayer;
+        }
+
         if (ownerID == null || level.isClientSide) {
             return null;
         }
@@ -175,22 +176,19 @@ public abstract class ManaBurstEntityMixin implements IOwnedByPlayer {
             return null;
         }
 
-        var onlinePlayer = server.getPlayerList().getPlayer(ownerID);
-        if (onlinePlayer == null) {
-            return null;
-        }
-
-        return onlinePlayer;
+        return server.getPlayerList().getPlayer(ownerID);
     }
 
-//    @Inject(method = "addAdditionalSaveData", at = @At("RETURN"), remap = false)
-    private void readData(CompoundTag tag, CallbackInfo info) {
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
         if (tag.contains("Flan:PlayerOrigin"))
             this.ownerID = tag.getUUID("Flan:PlayerOrigin");
     }
 
-//    @Inject(method = "readAdditionalSaveData", at = @At("RETURN"), remap = false)
-    private void writeData(CompoundTag tag, CallbackInfo info) {
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         if (this.ownerID != null)
             tag.putUUID("Flan:PlayerOrigin", this.ownerID);
     }

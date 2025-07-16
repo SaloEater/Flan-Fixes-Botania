@@ -15,10 +15,10 @@ import java.util.UUID;
 
 @Mixin(ManaSpreaderBlockEntity.class)
 public abstract class ManaSpreaderBlockEntityMixin implements IOwnedByPlayer {
-    private UUID ownerID;
+    public UUID ownerID;
 
     @Inject(method = "getBurst", at = @At("RETURN"), remap = false)
-    private void setBurstOwner(boolean fake, CallbackInfoReturnable<ManaBurstEntity> info) {
+    public void setBurstOwner(boolean fake, CallbackInfoReturnable<ManaBurstEntity> info) {
         ManaBurstEntity burst = info.getReturnValue();
         if (burst == null || burst.getOwner() != null) {
             return;
@@ -32,13 +32,13 @@ public abstract class ManaSpreaderBlockEntityMixin implements IOwnedByPlayer {
     }
 
     @Inject(method = "readPacketNBT", at = @At("RETURN"), remap = false)
-    private void readData(CompoundTag tag, CallbackInfo info) {
+    public void readData(CompoundTag tag, CallbackInfo info) {
         if (tag.contains("Flan:PlayerOrigin"))
             this.ownerID = tag.getUUID("Flan:PlayerOrigin");
     }
 
     @Inject(method = "writePacketNBT", at = @At("RETURN"), remap = false)
-    private void writeData(CompoundTag tag, CallbackInfo info) {
+    public void writeData(CompoundTag tag, CallbackInfo info) {
         if (this.ownerID != null)
             tag.putUUID("Flan:PlayerOrigin", this.ownerID);
     }

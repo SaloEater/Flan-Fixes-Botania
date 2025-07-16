@@ -4,11 +4,26 @@ import net.minecraftforge.event.level.BlockEvent;
 import vazkii.botania.common.block.mana.ManaSpreaderBlock;
 
 public class OnPlayerInteract {
-    public static void onPlayerInteract(BlockEvent.EntityPlaceEvent e) {
-        if (e.getEntity() != null && e.getPlacedBlock().getBlock() instanceof ManaSpreaderBlock) {
-            if (e.getPlacedBlock().hasBlockEntity() && e.getLevel().getBlockEntity(e.getPos()) instanceof IOwnedByPlayer spreader) {
-                spreader.setOwnerID(e.getEntity().getUUID());
+    public static final Class<?>[] OWNED_BLOCKS = {
+            ManaSpreaderBlock.class,
+    };
+
+    public static boolean isOwnedBlock(Object block) {
+        for (Class<?> clazz : OWNED_BLOCKS) {
+            if (clazz.isInstance(block)) {
+                return true;
             }
+        }
+        return false;
+    }
+
+    public static void onPlayerInteract(BlockEvent.EntityPlaceEvent e) {
+        if (!isOwnedBlock(e.getPlacedBlock().getBlock()) || e.getEntity() == null) {
+            return;
+        }
+
+        if (e.getPlacedBlock().hasBlockEntity() && e.getLevel().getBlockEntity(e.getPos()) instanceof IOwnedByPlayer ownedByPlayer) {
+            ownedByPlayer.setOwnerID(e.getEntity().getUUID());
         }
     }
 }
