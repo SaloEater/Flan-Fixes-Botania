@@ -37,6 +37,6 @@ public abstract class PaintslingerLensMixin {
             return;
         }
         var ownedByPlayer =  burstEntity instanceof IOwnedByPlayer o ? o : null;
-        coordsToPaint.removeIf(pos -> !ManaBurstEntityHelper.evaluatePlayer(pos, burstEntity, ownedByPlayer));
+        coordsToPaint.removeIf(pos -> !ManaBurstEntityHelper.evaluateCanPlayerHit(pos, burstEntity, ownedByPlayer));
     }
 }

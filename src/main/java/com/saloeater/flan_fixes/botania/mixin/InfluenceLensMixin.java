@@ -77,6 +77,6 @@ public class InfluenceLensMixin {
         if (!(burst instanceof ManaBurstEntity burstEntity)) {
             return true;
         }
-        return ManaBurstEntityHelper.evaluatePlayer(entity.getOnPos(), burstEntity, ownedByPlayer);
+        return ManaBurstEntityHelper.evaluateCanPlayerHit(entity.getOnPos(), burstEntity, ownedByPlayer);
     }
 }

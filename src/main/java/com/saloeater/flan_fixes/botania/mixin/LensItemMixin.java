@@ -5,12 +5,10 @@ import com.saloeater.flan_fixes.botania.IStorage;
 import com.saloeater.flan_fixes.botania.IStorageHelper;
 import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -53,7 +51,7 @@ public class LensItemMixin {
         }
 
         var ownedByPlayer =  burstEntity instanceof IOwnedByPlayer o ? o : null;
-        var canHit = ManaBurstEntityHelper.evaluatePlayer(pos, burstEntity, ownedByPlayer);
+        var canHit = ManaBurstEntityHelper.evaluateCanPlayerHit(pos, burstEntity, ownedByPlayer);
         this.setCache(burstEntity, pos, canHit);
         return canHit;
     }

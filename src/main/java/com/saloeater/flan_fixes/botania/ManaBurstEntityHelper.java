@@ -20,7 +20,22 @@ import java.util.UUID;
 import static com.saloeater.flan_fixes.botania.BotaniaCompat.PROJECTILE;
 
 public class ManaBurstEntityHelper {
-    public static ServerPlayer getOwner(ManaBurstEntity burst) {
+    public static boolean evaluateCanPlayerHit(BlockPos pos, ManaBurstEntity entity, IOwnedByPlayer owner) {
+        if (owner == null || owner.getOwnerID() == null) {
+            return !ManaBurstEntityHelper.isClaimExist(pos, entity);
+        }
+        boolean canHit;
+        var serverPlayer = ManaBurstEntityHelper.getOwner(entity);
+        if (serverPlayer != null) {
+            entity.setOwner(serverPlayer);
+            canHit = BotaniaCompat.canLensProjectileHit(entity, pos);
+        } else {
+            canHit = ManaBurstEntityHelper.evaluateCanOfflinePlayerHit(entity.level(), pos, owner.getOwnerID());
+        }
+        return canHit;
+    }
+
+    private static ServerPlayer getOwner(ManaBurstEntity burst) {
         var ownedByPlayer = burst instanceof IOwnedByPlayer o ? o : null;
 
         if (burst.getOwner() instanceof ServerPlayer) {
@@ -43,22 +58,16 @@ public class ManaBurstEntityHelper {
         return server.getPlayerList().getPlayer(ownerID);
     }
 
-    public static boolean evaluatePlayer(BlockPos pos, ManaBurstEntity entity, IOwnedByPlayer owner) {
-        if (owner == null || owner.getOwnerID() == null) {
-            return false;
+    private static boolean isClaimExist(BlockPos pos, ManaBurstEntity entity) {
+        var level = entity.level();
+        if (!(level instanceof ServerLevel world)) {
+            return true;
         }
-        boolean canHit;
-        var serverPlayer = ManaBurstEntityHelper.getOwner(entity);
-        if (serverPlayer != null) {
-            entity.setOwner(serverPlayer);
-            canHit = BotaniaCompat.canLensProjectileHit(entity, pos);
-        } else {
-            canHit = ManaBurstEntityHelper.evaluateOfflinePlayer(entity.level(), pos, owner.getOwnerID());
-        }
-        return canHit;
+        var storage = ClaimStorage.get(world);
+        return storage.getClaimAt(pos) == null;
     }
 
-    public static boolean evaluateOfflinePlayer(Level level, BlockPos pos, UUID ownerID) {
+    private static boolean evaluateCanOfflinePlayerHit(Level level, BlockPos pos, UUID ownerID) {
         if (!(level instanceof ServerLevel world)) {
             return true;
         }
@@ -75,12 +84,12 @@ public class ManaBurstEntityHelper {
         return getClaimPermission(claim, ownerID, world, pos);
     }
 
-    public static boolean getGlobalClaimPermission(ServerLevel serverLevel) {
+    private static boolean getGlobalClaimPermission(ServerLevel serverLevel) {
         Config.GlobalType global = ConfigHandler.CONFIG.getGlobal(serverLevel, PROJECTILE);
         return global == Config.GlobalType.NONE || global.getValue();
     }
 
-    public static boolean getClaimPermission(Claim claim, UUID ownerID, ServerLevel world, BlockPos pos) {
+    private static boolean getClaimPermission(Claim claim, UUID ownerID, ServerLevel world, BlockPos pos) {
         if (ownerID == null || claim.getOwner().equals(ownerID) || claim.getAllowedFakePlayerUUID().contains(ownerID.toString())) {
             return true;
         }
@@ -133,7 +142,7 @@ public class ManaBurstEntityHelper {
         return claimHasPerm(claim, perm);
     }
 
-    public static boolean claimHasPerm(Claim claim, ResourceLocation perm) {
+    private static boolean claimHasPerm(Claim claim, ResourceLocation perm) {
         if (claim.parentClaim() == null) {
             return claim.permEnabled(perm) == 1;
         } else if (claim.permEnabled(perm) == -1) {
