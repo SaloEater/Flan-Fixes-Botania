@@ -10,13 +10,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(FlanFixesBotania.MODID)
 public class FlanFixesBotania
 {
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "flan_fixes_botania";
-    // Directly reference a slf4j logger
+    
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public FlanFixesBotania( )
@@ -24,13 +22,5 @@ public class FlanFixesBotania
         var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addListener(OnPlayerInteract::onPlayerInteract);
         forgeBus.register(this);
-    }
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
     }
 }

@@ -8,7 +8,7 @@ public class OnPlayerInteract {
             ManaSpreaderBlock.class,
     };
 
-    public static boolean isOwnedBlock(Object block) {
+    public static boolean isPlayerOwnedBlock(Object block) {
         for (Class<?> clazz : OWNED_BLOCKS) {
             if (clazz.isInstance(block)) {
                 return true;
@@ -18,7 +18,7 @@ public class OnPlayerInteract {
     }
 
     public static void onPlayerInteract(BlockEvent.EntityPlaceEvent e) {
-        if (!isOwnedBlock(e.getPlacedBlock().getBlock()) || e.getEntity() == null) {
+        if (!isPlayerOwnedBlock(e.getPlacedBlock().getBlock()) || e.getEntity() == null) {
             return;
         }
 
