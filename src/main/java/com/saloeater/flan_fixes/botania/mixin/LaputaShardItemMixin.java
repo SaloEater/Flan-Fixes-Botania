@@ -30,10 +30,9 @@ public abstract class LaputaShardItemMixin {
     UUID uuid;
 
     @Inject(
-            method = "m_6225_", // Точный дескриптор метода useOn
-            at = @At("HEAD"), // Внедрение в начало метода
-            cancellable = true // Установка cancellable=true, если вы планируете отменять выполнение метода.
-            // Если нет, это можно опустить, но метод-обработчик все равно будет использовать CallbackInfoReturnable.
+            method = "m_6225_", 
+            at = @At("HEAD"), 
+            cancellable = true
     )
     public void flan_fixes$onUseOn_Head(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
         if (!(context.getPlayer() instanceof ServerPlayer serverPlayer)) {

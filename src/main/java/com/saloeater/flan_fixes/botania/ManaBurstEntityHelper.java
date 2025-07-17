@@ -70,7 +70,7 @@ public class ManaBurstEntityHelper {
 
     private static boolean isClaimExist(BlockPos pos, Level level) {
         if (!(level instanceof ServerLevel world)) {
-            return true;
+            return false;
         }
         var storage = ClaimStorage.get(world);
         return storage.getClaimAt(pos) == null;
@@ -78,14 +78,14 @@ public class ManaBurstEntityHelper {
 
     private static boolean evaluateCanOfflinePlayerHit(Level level, BlockPos pos, UUID ownerID) {
         if (!(level instanceof ServerLevel world)) {
-            return true;
+            return false;
         }
 
         var storage = ClaimStorage.get(world);
         var claim = storage.getClaimAt(pos);
         if (claim == null) {
             if (!(storage.getForPermissionCheck(pos) instanceof GlobalClaim)) {
-                return true;
+                return false;
             }
             return getGlobalClaimPermission(world);
         }
@@ -99,7 +99,10 @@ public class ManaBurstEntityHelper {
     }
 
     private static boolean getClaimPermission(Claim claim, UUID ownerID, ServerLevel world, BlockPos pos) {
-        if (ownerID == null || claim.getOwner().equals(ownerID) || claim.getAllowedFakePlayerUUID().contains(ownerID.toString())) {
+        if (ownerID == null) {
+            return false;
+        }
+        if (claim.getOwner().equals(ownerID) || claim.getAllowedFakePlayerUUID().contains(ownerID.toString())) {
             return true;
         }
 

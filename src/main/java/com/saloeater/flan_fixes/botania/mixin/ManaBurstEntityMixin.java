@@ -5,6 +5,7 @@ import com.saloeater.flan_fixes.botania.IStorage;
 import com.saloeater.flan_fixes.botania.IStorageHelper;
 import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -16,6 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import vazkii.botania.common.entity.ManaBurstEntity;
 
 import java.util.HashMap;
@@ -97,19 +101,19 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
         return ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, entity, ownedByPlayer);
     }
 
-    /*@Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        if (tag.contains("Flan:PlayerOrigin"))
-            this.ownerID = tag.getUUID("Flan:PlayerOrigin");
+    @Inject(method = "m_7380_", at = @At("TAIL"))
+    public void flan_fixes$addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
+        if (this.getOwnerID() != null) {
+            tag.putUUID("Flan:PlayerOrigin", this.getOwnerID());
+        }
     }
 
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        if (this.ownerID != null)
-            tag.putUUID("Flan:PlayerOrigin", this.ownerID);
-    }*/
+    @Inject(method = "m_7378_", at = @At("TAIL"))
+    public void flan_fixes$readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
+        if (tag.contains("Flan:PlayerOrigin")) {
+            this.setOwnerID(tag.getUUID("Flan:PlayerOrigin"));
+        }
+    }
 
     @Unique
     public void setOwnerID(UUID uuid) {
