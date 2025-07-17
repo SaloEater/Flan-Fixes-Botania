@@ -9,6 +9,8 @@
     "LensItemMixin",
     "ManaBurstEntityMixin",
     "ManaSpreaderBlockEntityMixin",
+    "ManastormChargeBlockManaTriggerImplMixin",
+    "ManastormEntityMixin",
     "PaintslingerLensMixin"
   ],
   "server": [
