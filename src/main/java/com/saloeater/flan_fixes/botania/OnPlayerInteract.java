@@ -23,7 +23,7 @@ public class OnPlayerInteract {
         }
 
         if (e.getPlacedBlock().hasBlockEntity() && e.getLevel().getBlockEntity(e.getPos()) instanceof IOwnedByPlayer ownedByPlayer) {
-            ownedByPlayer.setOwnerID(e.getEntity().getUUID());
+            IOwnedByPlayerHelper.setOwnerID(ownedByPlayer, e.getEntity().getUUID());
         }
     }
 }

@@ -19,7 +19,7 @@ import vazkii.botania.common.entity.ManaBurstEntity;
 import vazkii.botania.common.item.lens.LensItem;
 
 @Mixin(value = LensItem.class, remap = false)
-public class LensItemMixin {
+public abstract class LensItemMixin {
     @Inject(method = "collideBurst", at = @At(value = "HEAD"), cancellable = true)
     private void flan_fixes$collideBurst(ManaBurst burst, HitResult hit, boolean isManaBlock, boolean shouldKill, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (!(burst.entity() instanceof ManaBurstEntity burstEntity)) {
@@ -51,7 +51,7 @@ public class LensItemMixin {
         }
 
         var ownedByPlayer =  burstEntity instanceof IOwnedByPlayer o ? o : null;
-        var canHit = ManaBurstEntityHelper.evaluateCanPlayerHit(pos, burstEntity, ownedByPlayer);
+        var canHit = ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, burstEntity, ownedByPlayer);
         this.setCache(burstEntity, pos, canHit);
         return canHit;
     }

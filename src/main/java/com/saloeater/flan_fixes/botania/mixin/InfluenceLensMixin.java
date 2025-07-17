@@ -15,12 +15,11 @@ import vazkii.botania.api.internal.ManaBurst;
 import vazkii.botania.common.entity.ManaBurstEntity;
 import vazkii.botania.common.item.lens.InfluenceLens;
 
+import java.util.Iterator;
 import java.util.List;
 
-import java.util.Iterator;
-
 @Mixin(value = InfluenceLens.class, remap = false)
-public class InfluenceLensMixin {
+public abstract class InfluenceLensMixin {
     @Inject(method = "updateBurst", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Iterables;concat([Ljava/lang/Iterable;)Ljava/lang/Iterable;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private void flan_fixes$updateBurst(
             ManaBurst burst,
@@ -77,6 +76,6 @@ public class InfluenceLensMixin {
         if (!(burst instanceof ManaBurstEntity burstEntity)) {
             return true;
         }
-        return ManaBurstEntityHelper.evaluateCanPlayerHit(entity.getOnPos(), burstEntity, ownedByPlayer);
+        return ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(entity.getOnPos(), burstEntity, ownedByPlayer);
     }
 }

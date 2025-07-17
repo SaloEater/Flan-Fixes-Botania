@@ -20,9 +20,9 @@ import java.util.UUID;
 import static com.saloeater.flan_fixes.botania.BotaniaCompat.PROJECTILE;
 
 public class ManaBurstEntityHelper {
-    public static boolean evaluateCanPlayerHit(BlockPos pos, ManaBurstEntity entity, IOwnedByPlayer owner) {
-        if (owner == null || owner.getOwnerID() == null) {
-            return !ManaBurstEntityHelper.isClaimExist(pos, entity);
+    public static boolean evaluateCanPlayerHitByManaBurst(BlockPos pos, ManaBurstEntity entity, IOwnedByPlayer owner) {
+        if (owner == null || IOwnedByPlayerHelper.getOwnerID(owner) == null) {
+            return !ManaBurstEntityHelper.isClaimExist(pos, entity.level());
         }
         boolean canHit;
         var serverPlayer = ManaBurstEntityHelper.getOwner(entity);
@@ -30,9 +30,20 @@ public class ManaBurstEntityHelper {
             entity.setOwner(serverPlayer);
             canHit = BotaniaCompat.canLensProjectileHit(entity, pos);
         } else {
-            canHit = ManaBurstEntityHelper.evaluateCanOfflinePlayerHit(entity.level(), pos, owner.getOwnerID());
+            canHit = ManaBurstEntityHelper.evaluateCanOfflinePlayerHit(entity.level(), pos, IOwnedByPlayerHelper.getOwnerID(owner));
         }
         return canHit;
+    }
+
+    public static boolean evaluateCanPlayerHit(BlockPos pos, ServerPlayer owner, Level level) {
+        if (owner == null) {
+            return !ManaBurstEntityHelper.isClaimExist(pos, level);
+        }
+        return BotaniaCompat.canPlayerHit(owner, pos);
+    }
+
+    public static boolean evaluateCanPlayerHitByUUID(Level world, BlockPos pos, UUID ownerID) {
+        return ManaBurstEntityHelper.evaluateCanOfflinePlayerHit(world, pos, ownerID);
     }
 
     private static ServerPlayer getOwner(ManaBurstEntity burst) {
@@ -40,12 +51,12 @@ public class ManaBurstEntityHelper {
             return (ServerPlayer) burst.getOwner();
         }
 
-        var ownedByPlayer = burst instanceof IOwnedByPlayer o ? o : null;
-        if (ownedByPlayer == null) {
+        var owner = burst instanceof IOwnedByPlayer o ? o : null;
+        if (owner == null) {
             return null;
         }
 
-        var ownerID = ownedByPlayer.getOwnerID();
+        var ownerID = IOwnedByPlayerHelper.getOwnerID(owner);
         if (ownerID == null) {
             return null;
         }
@@ -57,8 +68,7 @@ public class ManaBurstEntityHelper {
         return server.getPlayerList().getPlayer(ownerID);
     }
 
-    private static boolean isClaimExist(BlockPos pos, ManaBurstEntity entity) {
-        var level = entity.level();
+    private static boolean isClaimExist(BlockPos pos, Level level) {
         if (!(level instanceof ServerLevel world)) {
             return true;
         }

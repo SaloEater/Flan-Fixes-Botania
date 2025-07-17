@@ -1,6 +1,7 @@
 package com.saloeater.flan_fixes.botania.mixin;
 
 import com.saloeater.flan_fixes.botania.IOwnedByPlayer;
+import com.saloeater.flan_fixes.botania.IOwnedByPlayerHelper;
 import net.minecraft.nbt.CompoundTag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,7 +29,7 @@ public abstract class ManaSpreaderBlockEntityMixin implements IOwnedByPlayer {
             return;
         }
 
-        ownedByPlayer.setOwnerID(this.ownerID);
+        IOwnedByPlayerHelper.setOwnerID(ownedByPlayer, this.ownerID);
     }
 
     @Inject(method = "readPacketNBT", at = @At("RETURN"), remap = false)

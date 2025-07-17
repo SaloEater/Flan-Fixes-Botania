@@ -18,7 +18,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import vazkii.botania.common.entity.ManaBurstEntity;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Mixin(value = ManaBurstEntity.class, remap = false)
 public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedByPlayer, IStorage {
@@ -31,12 +33,10 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
     }
 
     @Shadow
-    protected void onHitBlock(@NotNull BlockHitResult hit) {
-    }
+    protected abstract void onHitBlock(@NotNull BlockHitResult hit);
 
     @Shadow
-    protected void onHitEntity(@NotNull EntityHitResult hit) {
-    }
+    protected abstract void onHitEntity(@NotNull EntityHitResult hit);
 
     @Override
     public void onHit(@NotNull HitResult hit) {
@@ -57,13 +57,13 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
 
     private boolean canHitResultCached(ManaBurstEntity burst, @NotNull HitResult hit) {
         var pos = getPos(hit, burst);
-        var cached = this.get(IStorageHelper.getKey(pos));
+        var cached = IStorageHelper.get(this, IStorageHelper.getKey(pos));
         if (cached != null) {
             return cached;
         }
 
         var canHit = this.canHitResult(hit);
-        this.set(IStorageHelper.getKey(pos), canHit);
+        IStorageHelper.set(this, IStorageHelper.getKey(pos), canHit);
         return canHit;
     }
 
@@ -94,7 +94,7 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
 
         var entity = (ManaBurstEntity) (Object) this;
         var ownedByPlayer = entity instanceof IOwnedByPlayer o ? o : null;
-        return ManaBurstEntityHelper.evaluateCanPlayerHit(pos, entity, ownedByPlayer);
+        return ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, entity, ownedByPlayer);
     }
 
     /*@Override
