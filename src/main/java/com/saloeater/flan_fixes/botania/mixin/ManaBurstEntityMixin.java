@@ -20,9 +20,11 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import vazkii.botania.common.entity.ManaBurstEntity;
 
 import java.util.Iterator;
@@ -35,29 +37,42 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
     public UUID ownerID;
     public BlockPos pos;
 
-    protected ManaBurstEntityMixin(EntityType<? extends ThrowableProjectile> p_37466_, Level p_37467_) {
+    public ManaBurstEntityMixin(EntityType<? extends ThrowableProjectile> p_37466_, Level p_37467_) {
         super(p_37466_, p_37467_);
     }
 
+    @Shadow
+    protected void onHitBlock(@NotNull BlockHitResult hit) {}
+    @Shadow
+    protected void onHitEntity(@NotNull EntityHitResult hit) {}
+
     @Override
-    protected void onHitBlock(BlockHitResult hit) {
-        this.pos = hit.getBlockPos();
+    public void onHit(@NotNull HitResult hit) {
+        var burst = (ManaBurstEntity) (Object) this;
 
-        if (!canLensHit(this.pos)) {
-            return;
+        if(!this.canHitResult(hit)) {
+              return;
         }
-
-        super.onHitBlock(hit);
+        if (burst.isFake()) {
+            if (hit.getType() == HitResult.Type.BLOCK) {
+                this.onHitBlock((BlockHitResult) hit);
+            } else if (hit.getType() == HitResult.Type.ENTITY) {
+                this.onHitEntity((EntityHitResult) hit);
+            }
+        } else {
+            super.onHit(hit);
+        }
     }
 
-    @Override
-    protected void onHitEntity(EntityHitResult hit) {
-        this.pos = hit.getEntity().getOnPos();
-
-        if (!canLensHit(this.pos)) {
-            return;
+    private boolean canHitResult(HitResult hit) {
+        if (hit.getType() == HitResult.Type.BLOCK) {
+            BlockPos pos = ((BlockHitResult) hit).getBlockPos();
+            return this.canLensHit(pos);
+        } else if (hit.getType() == HitResult.Type.ENTITY) {
+            EntityHitResult entityHit = (EntityHitResult) hit;
+            return this.canLensHit(entityHit.getEntity().getOnPos());
         }
-        super.onHitEntity(hit);
+        return false;
     }
 
     public boolean canLensHit(BlockPos pos) {
@@ -180,14 +195,14 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         if (tag.contains("Flan:PlayerOrigin"))
             this.ownerID = tag.getUUID("Flan:PlayerOrigin");
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (this.ownerID != null)
             tag.putUUID("Flan:PlayerOrigin", this.ownerID);
