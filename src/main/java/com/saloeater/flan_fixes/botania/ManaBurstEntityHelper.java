@@ -36,12 +36,11 @@ public class ManaBurstEntityHelper {
     }
 
     private static ServerPlayer getOwner(ManaBurstEntity burst) {
-        var ownedByPlayer = burst instanceof IOwnedByPlayer o ? o : null;
-
         if (burst.getOwner() instanceof ServerPlayer) {
             return (ServerPlayer) burst.getOwner();
         }
 
+        var ownedByPlayer = burst instanceof IOwnedByPlayer o ? o : null;
         if (ownedByPlayer == null) {
             return null;
         }

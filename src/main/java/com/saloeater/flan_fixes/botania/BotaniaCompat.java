@@ -14,7 +14,7 @@ public class BotaniaCompat {
     public static boolean canLensProjectileHit(ManaBurstEntity burst, BlockPos blockPos) {
         var owner = burst.getOwner();
         if (!(owner instanceof ServerPlayer)) {
-            return true;
+            return false;
         }
 
         return ClaimHandler.canInteract((ServerPlayer) owner, blockPos, PROJECTILE);
