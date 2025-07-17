@@ -73,9 +73,10 @@ public class InfluenceLensMixin {
     }
 
     private Boolean canHit(ManaBurst burst, Entity entity) {
-        if (!(burst instanceof IOwnedByPlayer ownedByPlayer) || !(burst instanceof ManaBurstEntity burstEntity)) {
+        var ownedByPlayer = burst instanceof IOwnedByPlayer o ? o : null;
+        if (!(burst instanceof ManaBurstEntity burstEntity)) {
             return true;
         }
-        return ManaBurstEntityHelper.evaluatePlayer(entity.getOnPos(), burstEntity, ownedByPlayer.getOwnerID());
+        return ManaBurstEntityHelper.evaluatePlayer(entity.getOnPos(), burstEntity, ownedByPlayer);
     }
 }

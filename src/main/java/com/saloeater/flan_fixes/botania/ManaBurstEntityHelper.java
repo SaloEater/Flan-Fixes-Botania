@@ -21,7 +21,7 @@ import static com.saloeater.flan_fixes.botania.BotaniaCompat.PROJECTILE;
 
 public class ManaBurstEntityHelper {
     public static ServerPlayer getOwner(ManaBurstEntity burst) {
-        var ownedByPlayer = (IOwnedByPlayer) burst;
+        var ownedByPlayer = burst instanceof IOwnedByPlayer o ? o : null;
 
         if (burst.getOwner() instanceof ServerPlayer) {
             return (ServerPlayer) burst.getOwner();
@@ -43,14 +43,17 @@ public class ManaBurstEntityHelper {
         return server.getPlayerList().getPlayer(ownerID);
     }
 
-    public static boolean evaluatePlayer(BlockPos pos, ManaBurstEntity entity, UUID ownerID) {
+    public static boolean evaluatePlayer(BlockPos pos, ManaBurstEntity entity, IOwnedByPlayer owner) {
+        if (owner == null || owner.getOwnerID() == null) {
+            return false;
+        }
         boolean canHit;
         var serverPlayer = ManaBurstEntityHelper.getOwner(entity);
         if (serverPlayer != null) {
             entity.setOwner(serverPlayer);
             canHit = BotaniaCompat.canLensProjectileHit(entity, pos);
         } else {
-            canHit = ManaBurstEntityHelper.evaluateOfflinePlayer(entity.level(), pos, ownerID);
+            canHit = ManaBurstEntityHelper.evaluateOfflinePlayer(entity.level(), pos, owner.getOwnerID());
         }
         return canHit;
     }

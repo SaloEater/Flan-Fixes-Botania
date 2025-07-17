@@ -93,7 +93,8 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
         }
 
         var entity = (ManaBurstEntity) (Object) this;
-        return ManaBurstEntityHelper.evaluatePlayer(pos, entity, this.ownerID);
+        var ownedByPlayer = entity instanceof IOwnedByPlayer o ? o : null;
+        return ManaBurstEntityHelper.evaluatePlayer(pos, entity, ownedByPlayer);
     }
 
     /*@Override

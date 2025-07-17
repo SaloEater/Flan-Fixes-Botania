@@ -24,35 +24,36 @@ import vazkii.botania.common.item.lens.LensItem;
 public class LensItemMixin {
     @Inject(method = "collideBurst", at = @At(value = "HEAD"), cancellable = true)
     private void flan_fixes$collideBurst(ManaBurst burst, HitResult hit, boolean isManaBlock, boolean shouldKill, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (!(burst.entity() instanceof ManaBurstEntity burstEntity) || !(burstEntity instanceof IOwnedByPlayer ownedByPlayer)) {
+        if (!(burst.entity() instanceof ManaBurstEntity burstEntity)) {
             return;
         }
         var pos = this.getPos(hit, burstEntity);
 
-        if (!this.canHitAtPos(burstEntity, ownedByPlayer, pos)) {
+        if (!this.canHitAtPos(burstEntity, pos)) {
             cir.setReturnValue(false);
         }
     }
 
     @Inject(method = "updateBurst", at = @At(value = "HEAD"), cancellable = true)
     private void flan_fixes$updateBurst(ManaBurst burst, ItemStack stack, CallbackInfo ci) {
-        if (!(burst.entity() instanceof ManaBurstEntity burstEntity) || !(burstEntity instanceof IOwnedByPlayer ownedByPlayer)) {
+        if (!(burst.entity() instanceof ManaBurstEntity burstEntity)) {
             return;
         }
         var pos = burstEntity.getOnPos();
 
-        if (!this.canHitAtPos(burstEntity, ownedByPlayer, pos)) {
+        if (!this.canHitAtPos(burstEntity, pos)) {
             ci.cancel();
         }
     }
 
-    private boolean canHitAtPos(ManaBurstEntity burstEntity, IOwnedByPlayer ownedByPlayer, BlockPos pos) {
+    private boolean canHitAtPos(ManaBurstEntity burstEntity, BlockPos pos) {
         var cachedValue = this.fromCache(burstEntity, pos);
         if (cachedValue != null) {
             return cachedValue;
         }
 
-        var canHit = ManaBurstEntityHelper.evaluatePlayer(pos, burstEntity, ownedByPlayer.getOwnerID());
+        var ownedByPlayer =  burstEntity instanceof IOwnedByPlayer o ? o : null;
+        var canHit = ManaBurstEntityHelper.evaluatePlayer(pos, burstEntity, ownedByPlayer);
         this.setCache(burstEntity, pos, canHit);
         return canHit;
     }
