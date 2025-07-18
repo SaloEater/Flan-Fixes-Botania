@@ -1,6 +1,5 @@
 package com.saloeater.flan_fixes.botania.mixin;
 
-import com.saloeater.flan_fixes.botania.IOwnedByPlayer;
 import com.saloeater.flan_fixes.botania.IStorage;
 import com.saloeater.flan_fixes.botania.IStorageHelper;
 import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
@@ -50,8 +49,7 @@ public abstract class LensItemMixin {
             return cachedValue;
         }
 
-        var ownedByPlayer =  burstEntity instanceof IOwnedByPlayer o ? o : null;
-        var canHit = ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, burstEntity, ownedByPlayer);
+        var canHit = ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, burstEntity);
         this.setCache(burstEntity, pos, canHit);
         return canHit;
     }

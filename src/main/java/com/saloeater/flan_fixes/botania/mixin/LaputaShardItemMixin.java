@@ -76,9 +76,9 @@ public abstract class LaputaShardItemMixin {
         var canHit = false;
 
         if (player != null) {
-            canHit = ManaBurstEntityHelper.evaluateCanPlayerHit(pos, player, world);
+            canHit = ManaBurstEntityHelper.evaluateCanPlayerHitByPlayer(world, pos, player);
         } else if( uuid != null) {
-            canHit = ManaBurstEntityHelper.evaluateCanPlayerHitByUUID(world, pos, uuid);
+            canHit = ManaBurstEntityHelper.evaluateCanHitByUUID(world, pos, uuid);
         }
 
         return canHit && canMove(state, world, pos);
@@ -92,10 +92,6 @@ public abstract class LaputaShardItemMixin {
     public void flan_fixes$getBurst(Level world, BlockPos pos, ItemStack stack, CallbackInfoReturnable<ManaBurstEntity> cir, ManaBurstEntity burst) {
         if (player != null) {
             burst.setOwner(player);
-        }
-
-        if (uuid != null && burst instanceof IOwnedByPlayer owner) {
-            IOwnedByPlayerHelper.setOwnerID(owner, uuid);
         }
     }
 }

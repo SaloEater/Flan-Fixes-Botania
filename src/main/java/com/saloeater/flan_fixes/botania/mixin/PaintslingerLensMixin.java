@@ -1,6 +1,5 @@
 package com.saloeater.flan_fixes.botania.mixin;
 
-import com.saloeater.flan_fixes.botania.IOwnedByPlayer;
 import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import vazkii.botania.api.internal.ManaBurst;
-import vazkii.botania.common.entity.ManaBurstEntity;
 import vazkii.botania.common.item.lens.PaintslingerLens;
 
 import java.util.List;
@@ -33,10 +31,6 @@ public abstract class PaintslingerLensMixin {
             locals = LocalCapture.CAPTURE_FAILEXCEPTION 
     )
     private void botania$modifyCoordsToPaint(ManaBurst burst, HitResult hit, boolean isManaBlock, boolean shouldKill, ItemStack stack, CallbackInfoReturnable<Boolean> cir, Entity entity, int storedColor, BlockPos hitPos, Block hitBlock, ResourceLocation blockId, List<BlockPos> coordsToPaint) {
-        if (!(burst instanceof ManaBurstEntity burstEntity)) {
-            return;
-        }
-        var ownedByPlayer =  burstEntity instanceof IOwnedByPlayer o ? o : null;
-        coordsToPaint.removeIf(pos -> !ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, burstEntity, ownedByPlayer));
+        coordsToPaint.removeIf(pos -> !ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, burst));
     }
 }

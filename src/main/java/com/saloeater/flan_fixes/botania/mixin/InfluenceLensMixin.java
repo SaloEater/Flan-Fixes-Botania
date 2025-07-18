@@ -1,6 +1,5 @@
 package com.saloeater.flan_fixes.botania.mixin;
 
-import com.saloeater.flan_fixes.botania.IOwnedByPlayer;
 import com.saloeater.flan_fixes.botania.IStorage;
 import com.saloeater.flan_fixes.botania.IStorageHelper;
 import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
@@ -12,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import vazkii.botania.api.internal.ManaBurst;
-import vazkii.botania.common.entity.ManaBurstEntity;
 import vazkii.botania.common.item.lens.InfluenceLens;
 
 import java.util.Iterator;
@@ -72,10 +70,6 @@ public abstract class InfluenceLensMixin {
     }
 
     private Boolean canHit(ManaBurst burst, Entity entity) {
-        var ownedByPlayer = burst instanceof IOwnedByPlayer o ? o : null;
-        if (!(burst instanceof ManaBurstEntity burstEntity)) {
-            return true;
-        }
-        return ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(entity.getOnPos(), burstEntity, ownedByPlayer);
+        return ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(entity.getOnPos(), burst);
     }
 }
