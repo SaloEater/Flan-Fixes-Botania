@@ -6,6 +6,7 @@ import com.saloeater.flan_fixes.botania.IStorageHelper;
 import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -14,6 +15,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,6 +36,12 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
 
     public ManaBurstEntityMixin(EntityType<? extends ThrowableProjectile> p_37466_, Level p_37467_) {
         super(p_37466_, p_37467_);
+    }
+
+    @Override
+    public void setOwner(@Nullable Entity owner) {
+        super.setOwner(owner);
+        this.setOwnerID(owner != null ? owner.getUUID() : null);
     }
 
     @Shadow
