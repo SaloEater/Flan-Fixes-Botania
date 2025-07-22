@@ -11,7 +11,8 @@
     "ManaSpreaderBlockEntityMixin",
     "ManastormChargeBlockManaTriggerImplMixin",
     "ManastormEntityMixin",
-    "PaintslingerLensMixin"
+    "PaintslingerLensMixin",
+    "RedStringBlockEntityMixin"
   ],
   "server": [
   ],

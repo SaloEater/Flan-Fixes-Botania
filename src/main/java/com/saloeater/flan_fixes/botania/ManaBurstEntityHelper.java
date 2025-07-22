@@ -25,11 +25,15 @@ public class ManaBurstEntityHelper {
         if (serverPlayer == null) {
             return false;
         }
+
         burst.setOwner(serverPlayer);
         return BotaniaCompat.canLensProjectileHit(burst, pos);
     }
 
     public static boolean evaluateCanPlayerHitByPlayer(Level level, BlockPos pos, ServerPlayer player) {
+        if (pos == null) {
+            return false;
+        }
         if (player == null) {
             return !ManaBurstEntityHelper.isClaimExist(pos, level);
         }
@@ -37,7 +41,7 @@ public class ManaBurstEntityHelper {
     }
 
     public static boolean evaluateCanHitByUUID(Level world, BlockPos pos, UUID ownerID) {
-        return ManaBurstEntityHelper.evaluateCanPlayerHitByPlayer(world, pos, LevelUtils.getFakePlayer((ServerLevel) world, ownerID));
+        return ManaBurstEntityHelper.evaluateCanPlayerHitByPlayer(world, pos, ManaBurstEntityHelper.getPlayerByUUID(world, ownerID));
     }
 
     private static @Nullable ServerPlayer getOwner(ManaBurstEntity burst) {
@@ -50,7 +54,11 @@ public class ManaBurstEntityHelper {
             return null;
         }
 
-        var server = burst.level().getServer();
+        return getPlayerByUUID(burst.level(), ownerID);
+    }
+
+    private static @Nullable ServerPlayer getPlayerByUUID(Level level, UUID ownerID) {
+        var server = level.getServer();
         if (server == null) {
             return null;
         }
@@ -60,7 +68,7 @@ public class ManaBurstEntityHelper {
             return onlinePlayer;
         }
 
-        return LevelUtils.getFakePlayer((ServerLevel) burst.level(), ownerID);
+        return LevelUtils.getFakePlayer((ServerLevel) level, ownerID);
     }
 
     private static boolean isClaimExist(BlockPos pos, Level level) {
@@ -68,6 +76,6 @@ public class ManaBurstEntityHelper {
             return false;
         }
         var storage = ClaimStorage.get(world);
-        return storage.getClaimAt(pos) == null;
+        return storage.getClaimAt(pos) != null;
     }
 }
