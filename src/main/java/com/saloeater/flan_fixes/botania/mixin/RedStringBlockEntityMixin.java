@@ -2,38 +2,44 @@ package com.saloeater.flan_fixes.botania.mixin;
 
 import com.saloeater.flan_fixes.botania.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import vazkii.botania.common.block.block_entity.BotaniaBlockEntity;
 import vazkii.botania.common.block.block_entity.red_string.RedStringBlockEntity;
 
 import java.util.UUID;
 
 @Mixin(value =  RedStringBlockEntity.class, remap = false)
-public abstract class RedStringBlockEntityMixin implements IRedStringBlock, IOwnedByPlayer {
+public abstract class RedStringBlockEntityMixin extends BotaniaBlockEntity implements IRedStringBlock, IOwnedByPlayer {
     Level level;
     public UUID ownerID;
 
-//    @Inject(method = "load", at = @At("TAIL"))
-//    public void flan_fixes$load(CompoundTag tag, CallbackInfo ci) {
-//        if (tag.contains("Flan:PlayerOrigin")) {
-//            this.setOwnerID(tag.getUUID("Flan:PlayerOrigin"));
-//        }
-//    }
-//
-//    @Inject(method = "saveAdditional", at = @At("TAIL"))
-//    public void flan_fixes$saveAdditional(CompoundTag tag, CallbackInfo ci) {
-//        if (this.getOwnerID() != null) {
-//            tag.putUUID("Flan:PlayerOrigin", this.getOwnerID());
-//        }
-//    }
+    public RedStringBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    @Override
+    public void writePacketNBT(CompoundTag cmp) {
+        super.writePacketNBT(cmp);
+        if (this.ownerID != null) {
+            cmp.putUUID("Flan:PlayerOrigin", this.ownerID);
+        }
+    }
+
+    @Override
+    public void readPacketNBT(CompoundTag cmp) {
+        super.readPacketNBT(cmp);
+        if (cmp.contains("Flan:PlayerOrigin")) {
+            this.ownerID = cmp.getUUID("Flan:PlayerOrigin");
+        }
+    }
 
     @Inject(
             method = "commonTick",

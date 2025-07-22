@@ -57,7 +57,7 @@ public class ManaBurstEntityHelper {
         return getPlayerByUUID(burst.level(), ownerID);
     }
 
-    private static @Nullable ServerPlayer getPlayerByUUID(Level level, UUID ownerID) {
+    public static @Nullable ServerPlayer getPlayerByUUID(Level level, UUID ownerID) {
         var server = level.getServer();
         if (server == null) {
             return null;
