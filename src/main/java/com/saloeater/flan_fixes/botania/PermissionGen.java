@@ -20,6 +20,6 @@ public class PermissionGen extends ClaimPermissionProvider {
         this.addPermission(BotaniaCompat.PROJECTILE, new ClaimPermission.Builder(
                 new ClaimPermission.Builder.ItemStackHolder(ResourceLocation.parse("botania:lens_normal")),
                 false, false, BuiltinPermission.order++, "botania",
-                List.of("Gives permission to botania lenses to active their projectile hit functionality")));
+                List.of("Gives permission to botania items to interact with your claim")));
     }
 }

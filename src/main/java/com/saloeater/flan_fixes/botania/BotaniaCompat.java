@@ -1,6 +1,9 @@
 package com.saloeater.flan_fixes.botania;
 
 import io.github.flemmli97.flan.api.ClaimHandler;
+import io.github.flemmli97.flan.claim.PermHelper;
+import io.github.flemmli97.flan.config.ConfigHandler;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +22,10 @@ public class BotaniaCompat {
     }
 
     public static boolean canPlayerHit(ServerPlayer owner, BlockPos blockPos) {
-        return ClaimHandler.canInteract(owner, blockPos, PROJECTILE);
+        var canHit = ClaimHandler.canInteract(owner, blockPos, PROJECTILE);
+        if (!canHit) {
+            owner.displayClientMessage(PermHelper.simpleColoredText(ConfigHandler.LANG_MANAGER.get("noPermissionSimple"), ChatFormatting.DARK_RED), true);
+        }
+        return canHit;
     }
 }

@@ -30,7 +30,7 @@ public abstract class LaputaShardItemMixin {
     UUID uuid;
 
     @Inject(
-            method = "m_6225_", 
+            method = "m_6225_", //onUse
             at = @At("HEAD"), 
             cancellable = true
     )
@@ -43,7 +43,10 @@ public abstract class LaputaShardItemMixin {
         uuid = player.getUUID();
     }
 
-    @Inject(method = "m_6225_", at = @At("RETURN"))
+    @Inject(
+            method = "m_6225_", //onUse
+            at = @At("RETURN")
+    )
     public void flan_fixes$onUseOn_Return(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
         player = null;
         uuid = null;
@@ -66,7 +69,7 @@ public abstract class LaputaShardItemMixin {
     }
 
     @Shadow
-    private static boolean canMove(BlockState state, Level world, BlockPos pos) {
+    public static boolean canMove(BlockState state, Level world, BlockPos pos) {
         throw new AbstractMethodError("Shadow method should not be called directly!");
     }
 
@@ -76,7 +79,7 @@ public abstract class LaputaShardItemMixin {
         var canHit = false;
 
         if (player != null) {
-            canHit = ManaBurstEntityHelper.evaluateCanPlayerHitByPlayer(world, pos, player);
+            canHit = ManaBurstEntityHelper.evaluateCanHitByPlayer(world, pos, player);
         } else if( uuid != null) {
             canHit = ManaBurstEntityHelper.evaluateCanHitByUUID(world, pos, uuid);
         }

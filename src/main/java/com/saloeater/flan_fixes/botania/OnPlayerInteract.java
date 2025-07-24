@@ -3,11 +3,13 @@ package com.saloeater.flan_fixes.botania;
 import net.minecraftforge.event.level.BlockEvent;
 import vazkii.botania.common.block.mana.ManaSpreaderBlock;
 import vazkii.botania.common.block.red_string.RedStringBlock;
+import vazkii.botania.forge.block.ForgeSpecialFlowerBlock;
 
 public class OnPlayerInteract {
     public static final Class<?>[] OWNED_BLOCKS = {
             ManaSpreaderBlock.class,
             RedStringBlock.class,
+            ForgeSpecialFlowerBlock.class,
     };
 
     public static boolean isPlayerOwnedBlock(Object block) {

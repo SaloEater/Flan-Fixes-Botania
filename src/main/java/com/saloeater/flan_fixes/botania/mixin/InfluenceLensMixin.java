@@ -19,7 +19,7 @@ import java.util.List;
 @Mixin(value = InfluenceLens.class, remap = false)
 public abstract class InfluenceLensMixin {
     @Inject(method = "updateBurst", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Iterables;concat([Ljava/lang/Iterable;)Ljava/lang/Iterable;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-    private void flan_fixes$updateBurst(
+    public void flan_fixes$updateBurst(
             ManaBurst burst,
             ItemStack stack,
             CallbackInfo ci,
@@ -44,7 +44,7 @@ public abstract class InfluenceLensMixin {
         processList(burst, storage, bursts);
     }
 
-    private void processList(ManaBurst burst, IStorage storage, List<Entity> entities) {
+    public void processList(ManaBurst burst, IStorage storage, List<Entity> entities) {
         Iterator<Entity> it = entities.iterator();
 
         while (it.hasNext()) {
@@ -57,7 +57,7 @@ public abstract class InfluenceLensMixin {
         }
     }
 
-    private Boolean canHitComplete(ManaBurst burst, IStorage storage, String uuid, Iterator<Entity> it, Entity entity) {
+    public Boolean canHitComplete(ManaBurst burst, IStorage storage, String uuid, Iterator<Entity> it, Entity entity) {
         if (IStorageHelper.has(storage, uuid)) {
             if (Boolean.FALSE.equals(IStorageHelper.get(storage, uuid))) {
                 return false;
@@ -69,7 +69,7 @@ public abstract class InfluenceLensMixin {
         return canHit;
     }
 
-    private Boolean canHit(ManaBurst burst, Entity entity) {
+    public Boolean canHit(ManaBurst burst, Entity entity) {
         return ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(entity.getOnPos(), burst);
     }
 }

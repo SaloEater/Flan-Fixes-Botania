@@ -20,7 +20,7 @@ import vazkii.botania.common.item.lens.LensItem;
 @Mixin(value = LensItem.class, remap = false)
 public abstract class LensItemMixin {
     @Inject(method = "collideBurst", at = @At(value = "HEAD"), cancellable = true)
-    private void flan_fixes$collideBurst(ManaBurst burst, HitResult hit, boolean isManaBlock, boolean shouldKill, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    public void flan_fixes$collideBurst(ManaBurst burst, HitResult hit, boolean isManaBlock, boolean shouldKill, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (!(burst.entity() instanceof ManaBurstEntity burstEntity)) {
             return;
         }
@@ -32,7 +32,7 @@ public abstract class LensItemMixin {
     }
 
     @Inject(method = "updateBurst", at = @At(value = "HEAD"), cancellable = true)
-    private void flan_fixes$updateBurst(ManaBurst burst, ItemStack stack, CallbackInfo ci) {
+    public void flan_fixes$updateBurst(ManaBurst burst, ItemStack stack, CallbackInfo ci) {
         if (!(burst.entity() instanceof ManaBurstEntity burstEntity)) {
             return;
         }
@@ -43,7 +43,7 @@ public abstract class LensItemMixin {
         }
     }
 
-    private boolean canHitAtPos(ManaBurstEntity burstEntity, BlockPos pos) {
+    public boolean canHitAtPos(ManaBurstEntity burstEntity, BlockPos pos) {
         var cachedValue = this.fromCache(burstEntity, pos);
         if (cachedValue != null) {
             return cachedValue;
@@ -54,28 +54,28 @@ public abstract class LensItemMixin {
         return canHit;
     }
 
-    private void setCache(ManaBurstEntity burstEntity, BlockPos pos, boolean canHit) {
+    public void setCache(ManaBurstEntity burstEntity, BlockPos pos, boolean canHit) {
         if (!(burstEntity instanceof IStorage storage)) {
             return;
         }
 
-        String key = IStorageHelper.getKey(pos);
+        String key = IStorageHelper.getBlockPosKey(pos);
         IStorageHelper.set(storage, key, canHit);
     }
 
-    private Boolean fromCache(ManaBurst burst, BlockPos pos) {
+    public Boolean fromCache(ManaBurst burst, BlockPos pos) {
         if (!(burst instanceof IStorage storage)) {
             return null;
         }
 
-        String key = IStorageHelper.getKey(pos);
+        String key = IStorageHelper.getBlockPosKey(pos);
         if (IStorageHelper.has(storage, key)) {
             return Boolean.FALSE.equals(IStorageHelper.get(storage, key));
         }
         return null;
     }
 
-    private BlockPos getPos(HitResult hit, ManaBurstEntity burstEntity) {
+    public BlockPos getPos(HitResult hit, ManaBurstEntity burstEntity) {
         if (hit.getType() == HitResult.Type.BLOCK) {
             return ((BlockHitResult) hit).getBlockPos();
         } else if (hit.getType() == HitResult.Type.ENTITY) {

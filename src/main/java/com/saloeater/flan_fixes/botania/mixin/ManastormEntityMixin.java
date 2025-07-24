@@ -17,14 +17,20 @@ import java.util.UUID;
 public abstract class ManastormEntityMixin implements IOwnedByPlayer {
     public UUID ownerID;
 
-    @Inject(method = "m_7378_", at = @At("TAIL"))
+    @Inject(
+            method = "m_7378_", //readAdditionalSaveData
+            at = @At("TAIL")
+    )
     public void flan_fixes$readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains("Flan:PlayerOrigin")) {
             this.setOwnerID(tag.getUUID("Flan:PlayerOrigin"));
         }
     }
 
-    @Inject(method = "m_7380_", at = @At("TAIL"))
+    @Inject(
+            method = "m_7380_", //addAdditionalSaveData
+            at = @At("TAIL")
+    )
     public void flan_fixes$addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
         if (this.getOwnerID() != null) {
             tag.putUUID("Flan:PlayerOrigin", this.getOwnerID());

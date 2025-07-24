@@ -32,7 +32,7 @@ import java.util.UUID;
 public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedByPlayer, IStorage {
     public UUID ownerID;
     public BlockPos pos;
-    private final Map<UUID, Boolean> entityMap = new HashMap<>();
+    public final Map<String, Boolean> positionsCache = new HashMap<>();
 
     public ManaBurstEntityMixin(EntityType<? extends ThrowableProjectile> p_37466_, Level p_37467_) {
         super(p_37466_, p_37467_);
@@ -67,19 +67,19 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
         }
     }
 
-    private boolean canHitResultCached(ManaBurstEntity burst, @NotNull HitResult hit) {
+    public boolean canHitResultCached(ManaBurstEntity burst, @NotNull HitResult hit) {
         var pos = getPos(hit, burst);
-        var cached = IStorageHelper.get(this, IStorageHelper.getKey(pos));
+        var cached = IStorageHelper.get(this, IStorageHelper.getBlockPosKey(pos));
         if (cached != null) {
             return cached;
         }
 
         var canHit = this.canHitResult(hit);
-        IStorageHelper.set(this, IStorageHelper.getKey(pos), canHit);
+        IStorageHelper.set(this, IStorageHelper.getBlockPosKey(pos), canHit);
         return canHit;
     }
 
-    private BlockPos getPos(HitResult hit, ManaBurstEntity burstEntity) {
+    public BlockPos getPos(HitResult hit, ManaBurstEntity burstEntity) {
         if (hit.getType() == HitResult.Type.BLOCK) {
             return ((BlockHitResult) hit).getBlockPos();
         } else if (hit.getType() == HitResult.Type.ENTITY) {
@@ -88,7 +88,7 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
         return burstEntity.getOnPos();
     }
 
-    private boolean canHitResult(HitResult hit) {
+    public boolean canHitResult(HitResult hit) {
         if (hit.getType() == HitResult.Type.BLOCK) {
             BlockPos pos = ((BlockHitResult) hit).getBlockPos();
             return this.canLensHit(pos);
@@ -108,14 +108,20 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
         return ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, entity);
     }
 
-    @Inject(method = "m_7380_", at = @At("TAIL"))
+    @Inject(
+            method = "m_7380_", //addAdditionalSaveData
+            at = @At("TAIL")
+    )
     public void flan_fixes$addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
         if (this.getOwnerID() != null) {
             tag.putUUID("Flan:PlayerOrigin", this.getOwnerID());
         }
     }
 
-    @Inject(method = "m_7378_", at = @At("TAIL"))
+    @Inject(
+            method = "m_7378_", //readAdditionalSaveData
+            at = @At("TAIL")
+    )
     public void flan_fixes$readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains("Flan:PlayerOrigin")) {
             this.setOwnerID(tag.getUUID("Flan:PlayerOrigin"));
@@ -132,15 +138,15 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
         return this.ownerID;
     }
 
-    public void set(UUID uuid, Boolean value) {
-        this.entityMap.put(uuid, value);
+    public void set(String uuid, Boolean value) {
+        this.positionsCache.put(uuid, value);
     }
 
-    public Boolean get(UUID uuid) {
-        return this.entityMap.get(uuid);
+    public Boolean get(String uuid) {
+        return this.positionsCache.get(uuid);
     }
 
-    public boolean has(UUID uuid) {
-        return this.entityMap.containsKey(uuid);
+    public boolean has(String uuid) {
+        return this.positionsCache.containsKey(uuid);
     }
 }

@@ -18,7 +18,7 @@ public class ManaBurstEntityHelper {
         }
 
         if (burst.getOwner() instanceof ServerPlayer serverPlayer) {
-            return ManaBurstEntityHelper.evaluateCanPlayerHitByPlayer(world, pos, serverPlayer);
+            return ManaBurstEntityHelper.evaluateCanHitByPlayer(world, pos, serverPlayer);
         }
 
         var serverPlayer = ManaBurstEntityHelper.getOwner(burst);
@@ -30,7 +30,7 @@ public class ManaBurstEntityHelper {
         return BotaniaCompat.canLensProjectileHit(burst, pos);
     }
 
-    public static boolean evaluateCanPlayerHitByPlayer(Level level, BlockPos pos, ServerPlayer player) {
+    public static boolean evaluateCanHitByPlayer(Level level, BlockPos pos, ServerPlayer player) {
         if (pos == null) {
             return false;
         }
@@ -41,10 +41,10 @@ public class ManaBurstEntityHelper {
     }
 
     public static boolean evaluateCanHitByUUID(Level world, BlockPos pos, UUID ownerID) {
-        return ManaBurstEntityHelper.evaluateCanPlayerHitByPlayer(world, pos, ManaBurstEntityHelper.getPlayerByUUID(world, ownerID));
+        return ManaBurstEntityHelper.evaluateCanHitByPlayer(world, pos, ManaBurstEntityHelper.getPlayerByUUID(world, ownerID));
     }
 
-    private static @Nullable ServerPlayer getOwner(ManaBurstEntity burst) {
+    public static @Nullable ServerPlayer getOwner(ManaBurstEntity burst) {
         if (!(burst instanceof IOwnedByPlayer owner)) {
             return null;
         }
@@ -58,6 +58,10 @@ public class ManaBurstEntityHelper {
     }
 
     public static @Nullable ServerPlayer getPlayerByUUID(Level level, UUID ownerID) {
+        if (ownerID == null) {
+            return null;
+        }
+
         var server = level.getServer();
         if (server == null) {
             return null;
@@ -71,7 +75,7 @@ public class ManaBurstEntityHelper {
         return LevelUtils.getFakePlayer((ServerLevel) level, ownerID);
     }
 
-    private static boolean isClaimExist(BlockPos pos, Level level) {
+    public static boolean isClaimExist(BlockPos pos, Level level) {
         if (!(level instanceof ServerLevel world)) {
             return false;
         }

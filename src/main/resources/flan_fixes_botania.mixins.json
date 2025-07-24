@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "DrumBlockManaTriggerImpl",
+    "FlameRingEntityMixin",
+    "HellsRodItemMixin",
     "HornItemMixin",
     "InfluenceLensMixin",
     "LaputaShardItemMixin",
@@ -13,8 +15,12 @@
     "ManaSpreaderBlockEntityMixin",
     "ManastormChargeBlockManaTriggerImplMixin",
     "ManastormEntityMixin",
+    "MoltenCoreRodItemMixin",
     "PaintslingerLensMixin",
-    "RedStringBlockEntityMixin"
+    "RannuncarpusBlockEntityMixin",
+    "RedStringBlockEntityMixin",
+    "ShiftingCrustRodItemMixin",
+    "TerraFirmaRodItemMixin"
   ],
   "server": [
   ],

@@ -1,7 +1,6 @@
 package com.saloeater.flan_fixes.botania;
 
 import net.minecraft.core.BlockPos;
-import org.jetbrains.annotations.NotNull;
 
 //After first install old burst doesn't have required methods so they throw AbstractMethodError
 public class IStorageHelper {
@@ -26,8 +25,7 @@ public class IStorageHelper {
         }
     }
 
-    public static String getKey(BlockPos pos) {
-        String key = String.valueOf(pos.asLong());
-        return key;
+    public static String getBlockPosKey(BlockPos pos) {
+        return String.valueOf(pos.asLong());
     }
 }

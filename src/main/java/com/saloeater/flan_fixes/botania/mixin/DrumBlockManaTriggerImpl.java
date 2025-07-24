@@ -25,7 +25,7 @@ public abstract class DrumBlockManaTriggerImpl implements IOwnedByPlayer {
             method = "onBurstCollision",
             at = @At("HEAD")
     )
-    private void flan_fixes$onBurstCollision(ManaBurst burst, CallbackInfo ci){
+    public void flan_fixes$onBurstCollision(ManaBurst burst, CallbackInfo ci){
         this.manaBurst = burst;
     }
 
@@ -37,7 +37,7 @@ public abstract class DrumBlockManaTriggerImpl implements IOwnedByPlayer {
             ),
             index = 3
     )
-    private @Nullable LivingEntity modifyHornItemBreakGrassLastArg(@Nullable LivingEntity user) {
+    public @Nullable LivingEntity modifyHornItemBreakGrassLastArg(@Nullable LivingEntity user) {
         if (this.manaBurst == null) {
             return user;
         }

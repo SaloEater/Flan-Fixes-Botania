@@ -30,7 +30,7 @@ public abstract class PaintslingerLensMixin {
             ),
             locals = LocalCapture.CAPTURE_FAILEXCEPTION 
     )
-    private void botania$modifyCoordsToPaint(ManaBurst burst, HitResult hit, boolean isManaBlock, boolean shouldKill, ItemStack stack, CallbackInfoReturnable<Boolean> cir, Entity entity, int storedColor, BlockPos hitPos, Block hitBlock, ResourceLocation blockId, List<BlockPos> coordsToPaint) {
+    public void botania$modifyCoordsToPaint(ManaBurst burst, HitResult hit, boolean isManaBlock, boolean shouldKill, ItemStack stack, CallbackInfoReturnable<Boolean> cir, Entity entity, int storedColor, BlockPos hitPos, Block hitBlock, ResourceLocation blockId, List<BlockPos> coordsToPaint) {
         coordsToPaint.removeIf(pos -> !ManaBurstEntityHelper.evaluateCanPlayerHitByManaBurst(pos, burst));
     }
 }
