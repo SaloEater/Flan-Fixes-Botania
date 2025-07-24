@@ -27,7 +27,7 @@ public class FlameRingEntityMixin implements IOwnedByPlayer, IStorage {
     public final Map<String, Boolean> positionsCache = new HashMap<>();
 
     @Inject(
-        method = "m_6075_" //baseTick
+        method = "m_6075_", //baseTick
         at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"),
         locals = LocalCapture.CAPTURE_FAILEXCEPTION
     )

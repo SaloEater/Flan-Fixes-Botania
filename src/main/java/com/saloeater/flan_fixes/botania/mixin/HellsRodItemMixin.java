@@ -21,7 +21,7 @@ import vazkii.botania.common.item.rod.HellsRodItem;
 public class HellsRodItemMixin {
     @Inject(
         method = "m_6225_", //useOn
-        at = @At(value = "INVOKE", target = "Lvazkii/botania/common/entity/FlameRingEntity;setPos(DDD)V"),
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z"), //Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z
         locals = LocalCapture.CAPTURE_FAILEXCEPTION
     )
     public void useOn(UseOnContext ctx, CallbackInfoReturnable<InteractionResult> cir, Level world, Player player, ItemStack stack, BlockPos pos, FlameRingEntity entity) {
