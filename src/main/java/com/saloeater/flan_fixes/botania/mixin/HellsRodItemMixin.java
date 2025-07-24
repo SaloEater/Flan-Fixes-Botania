@@ -20,7 +20,7 @@ import vazkii.botania.common.item.rod.HellsRodItem;
 @Mixin(value =  HellsRodItem.class, remap = false)
 public class HellsRodItemMixin {
     @Inject(
-        method = "useOn",
+        method = "m_6225_", //useOn
         at = @At(value = "INVOKE", target = "Lvazkii/botania/common/entity/FlameRingEntity;setPos(DDD)V"),
         locals = LocalCapture.CAPTURE_FAILEXCEPTION
     )

@@ -27,7 +27,7 @@ public class FlameRingEntityMixin implements IOwnedByPlayer, IStorage {
     public final Map<String, Boolean> positionsCache = new HashMap<>();
 
     @Inject(
-        method = "baseTick",
+        method = "m_6075_" //baseTick
         at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"),
         locals = LocalCapture.CAPTURE_FAILEXCEPTION
     )
@@ -47,7 +47,7 @@ public class FlameRingEntityMixin implements IOwnedByPlayer, IStorage {
     }
 
     @Inject(
-        method = "readAdditionalSaveData",
+        method = "m_7378_", //readAdditionalSaveData
         at = @At("TAIL")
     )
     public void readAdditionalSaveData(CompoundTag cmp, CallbackInfo ci) {
@@ -57,7 +57,7 @@ public class FlameRingEntityMixin implements IOwnedByPlayer, IStorage {
     }
 
     @Inject(
-        method = "addAdditionalSaveData",
+        method = "m_7380_", //addAdditionalSaveData
         at = @At("TAIL")
     )
     public  void addAdditionalSaveData(CompoundTag cmp, CallbackInfo ci) {
