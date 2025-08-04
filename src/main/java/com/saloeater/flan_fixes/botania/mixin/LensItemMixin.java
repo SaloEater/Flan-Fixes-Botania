@@ -44,7 +44,7 @@ public abstract class LensItemMixin {
     }
 
     public boolean canHitAtPos(ManaBurstEntity burstEntity, BlockPos pos) {
-        var cachedValue = this.fromCache(burstEntity, pos);
+        var cachedValue = this.canHitCached(burstEntity, pos);
         if (cachedValue != null) {
             return cachedValue;
         }
@@ -63,14 +63,14 @@ public abstract class LensItemMixin {
         IStorageHelper.set(storage, key, canHit);
     }
 
-    public Boolean fromCache(ManaBurst burst, BlockPos pos) {
+    public Boolean canHitCached(ManaBurst burst, BlockPos pos) {
         if (!(burst instanceof IStorage storage)) {
             return null;
         }
 
         String key = IStorageHelper.getBlockPosKey(pos);
         if (IStorageHelper.has(storage, key)) {
-            return Boolean.FALSE.equals(IStorageHelper.get(storage, key));
+            return Boolean.TRUE.equals(IStorageHelper.get(storage, key));
         }
         return null;
     }
