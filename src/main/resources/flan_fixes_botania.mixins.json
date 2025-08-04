@@ -12,6 +12,7 @@
     "HornItemMixin",
     "InfluenceLensMixin",
     "KindleLensMixin",
+    "LandsRodItemMixin",
     "LaputaShardItemMixin",
     "LensItemMixin",
     "ManaBurstEntityMixin",
@@ -22,6 +23,7 @@
     "PaintslingerLensMixin",
     "RannuncarpusBlockEntityMixin",
     "RedStringBlockEntityMixin",
+    "SeasRodItemMixin",
     "ShiftingCrustRodItemMixin",
     "TerraFirmaRodItemMixin",
     "WeightLensMixin"

@@ -1,11 +1,11 @@
 package com.saloeater.flan_fixes.botania.mixin;
 
-import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.level.BlockEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,6 +23,6 @@ public abstract class TerraFirmaRodItemMixin {
             locals = LocalCapture.CAPTURE_FAILEXCEPTION
     )
     public void flan_fixes$terraform(ItemStack stack, Level world, Player player, CallbackInfo ci, int range, BlockPos startCenter, List<BlockPos> blocks) {
-        blocks.removeIf(pos -> !(player instanceof ServerPlayer serverPlayer) || !ManaBurstEntityHelper.evaluateCanHitByPlayer(world, pos, serverPlayer));
+        blocks.removeIf(pos -> MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player)));
     }
 }

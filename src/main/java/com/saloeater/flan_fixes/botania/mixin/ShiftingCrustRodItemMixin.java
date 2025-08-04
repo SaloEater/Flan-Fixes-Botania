@@ -1,6 +1,5 @@
 package com.saloeater.flan_fixes.botania.mixin;
 
-import com.saloeater.flan_fixes.botania.ManaBurstEntityHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.level.BlockEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -91,6 +92,6 @@ public abstract class ShiftingCrustRodItemMixin {
             return;
         }
 
-        coordsList.removeIf(blockPos -> !(ManaBurstEntityHelper.evaluateCanHitByPlayer(world, blockPos, owner)));
+        coordsList.removeIf(blockPos -> MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, world.getBlockState(blockPos), owner)));
     }
 }
