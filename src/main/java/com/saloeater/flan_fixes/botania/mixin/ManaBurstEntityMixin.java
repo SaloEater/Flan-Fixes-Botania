@@ -52,7 +52,8 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
 
     @Override
     public void onHit(@NotNull HitResult hit) {
-        var burst = (ManaBurstEntity) (Object) this;
+        super.onHit(hit);
+       /* var burst = (ManaBurstEntity) (Object) this;
         if (!this.canHitResultCached(burst, hit)) {
             return;
         }
@@ -64,7 +65,7 @@ public abstract class ManaBurstEntityMixin extends Projectile implements IOwnedB
             }
         } else {
             super.onHit(hit);
-        }
+        }*/
     }
 
     public boolean canHitResultCached(ManaBurstEntity burst, @NotNull HitResult hit) {
