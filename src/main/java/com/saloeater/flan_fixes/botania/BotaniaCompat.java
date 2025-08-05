@@ -10,7 +10,8 @@ import net.minecraft.server.level.ServerPlayer;
 import vazkii.botania.common.entity.ManaBurstEntity;
 
 public class BotaniaCompat {
-    public static final ResourceLocation PROJECTILE = new ResourceLocation(FlanFixesBotania.MODID, "lens_projectile");
+    public static final ResourceLocation BOTANIA = new ResourceLocation(FlanFixesBotania.MODID, "botania");
+    public static final ResourceLocation CORPOREA_INDEX = new ResourceLocation(FlanFixesBotania.MODID, "corporea_index");
 
     public static boolean canLensProjectileHit(ManaBurstEntity burst, BlockPos blockPos) {
         var player = burst.getOwner();
@@ -22,10 +23,18 @@ public class BotaniaCompat {
     }
 
     public static boolean canPlayerHit(ServerPlayer owner, BlockPos blockPos) {
-        var canHit = ClaimHandler.canInteract(owner, blockPos, PROJECTILE);
+        var canHit = ClaimHandler.canInteract(owner, blockPos, BOTANIA);
         if (!canHit) {
             owner.displayClientMessage(PermHelper.simpleColoredText(ConfigHandler.LANG_MANAGER.get("noPermissionSimple"), ChatFormatting.DARK_RED), true);
         }
         return canHit;
+    }
+
+    public static boolean canPlayerUseCorporea(ServerPlayer owner, BlockPos blockPos) {
+        var canUse = ClaimHandler.canInteract(owner, blockPos, CORPOREA_INDEX);
+        if (!canUse) {
+            owner.displayClientMessage(PermHelper.simpleColoredText(ConfigHandler.LANG_MANAGER.get("noPermissionSimple"), ChatFormatting.DARK_RED), true);
+        }
+        return canUse;
     }
 }

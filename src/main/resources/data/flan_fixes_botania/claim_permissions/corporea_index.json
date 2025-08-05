@@ -1,0 +1,12 @@
+{
+  "guiItem": {
+    "id": "botania:corporea_index"
+  },
+  "defaultVal": false,
+  "global": false,
+  "order": 1,
+  "requiredMod": "botania",
+  "defaultDescription": [
+    "Gives permission to other players to use your Corporea Index"
+  ]
+}

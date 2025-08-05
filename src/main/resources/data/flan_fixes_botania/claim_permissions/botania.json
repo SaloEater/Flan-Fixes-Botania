@@ -7,6 +7,6 @@
   "order": 1,
   "requiredMod": "botania",
   "defaultDescription": [
-    "Gives permission to botania lenses to active their projectile hit functionality"
+    "Gives permission to all botania items to affect your claim"
   ]
 }

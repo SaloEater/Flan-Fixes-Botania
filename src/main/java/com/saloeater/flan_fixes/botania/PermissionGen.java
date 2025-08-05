@@ -17,9 +17,13 @@ public class PermissionGen extends ClaimPermissionProvider {
     @Override
     protected void add() {
         BuiltinPermission.DATAGEN_DATA.forEach(this::addPermission);
-        this.addPermission(BotaniaCompat.PROJECTILE, new ClaimPermission.Builder(
+        this.addPermission(BotaniaCompat.BOTANIA, new ClaimPermission.Builder(
                 new ClaimPermission.Builder.ItemStackHolder(ResourceLocation.parse("botania:lens_normal")),
                 false, false, BuiltinPermission.order++, "botania",
                 List.of("Gives permission to botania items to interact with your claim")));
+        this.addPermission(BotaniaCompat.CORPOREA_INDEX, new ClaimPermission.Builder(
+                new ClaimPermission.Builder.ItemStackHolder(ResourceLocation.parse("botania:corporea_index")),
+                false, false, BuiltinPermission.order++, "botania",
+                List.of("Gives permission to other players to use your Corporea Index")));
     }
 }
