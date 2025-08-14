@@ -23,7 +23,7 @@ public abstract class PowerGeneratorBlockEntityMixin {
         cancellable = true
     )
     private void flan_fixes_botania$canReceiveManaFromBursts(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(PowerGeneratorBlockEntity.MAX_ENERGY - energy > flan_fixes_botania$lastIncome);
+        cir.setReturnValue(energy == 0 || PowerGeneratorBlockEntity.MAX_ENERGY - energy > flan_fixes_botania$lastIncome);
     }
 
     @Inject(
