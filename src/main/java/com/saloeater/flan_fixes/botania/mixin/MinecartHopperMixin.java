@@ -32,7 +32,7 @@ public abstract class MinecartHopperMixin implements IOwnedByPlayer {
     }
 
     @Inject(
-        method = "suckInItems",
+        method = "m_38592_", //suckInItems
         at = @At("HEAD"),
         cancellable = true
     )
@@ -63,7 +63,7 @@ public abstract class MinecartHopperMixin implements IOwnedByPlayer {
     }
 
     @Inject(
-        method = "readAdditionalSaveData",
+        method = "m_7378_", //readAdditionalSaveData
         at = @At("TAIL")
     )
     private void flan_fixes_vanilla$readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
@@ -73,7 +73,7 @@ public abstract class MinecartHopperMixin implements IOwnedByPlayer {
     }
 
     @Inject(
-        method = "addAdditionalSaveData",
+        method = "m_7380_", //addAdditionalSaveData
         at = @At("TAIL")
     )
     private void flan_fixes_vanilla$addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {

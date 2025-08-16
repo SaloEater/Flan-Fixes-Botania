@@ -20,10 +20,10 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(value = MinecartItem.class)
 public abstract class MinecartItemMixin {
     @Inject(
-        method="useOn",
+        method="m_6225_",//"useOn",
         at= @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+            target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z" //addFreshEntity
         ),
         locals = LocalCapture.CAPTURE_FAILEXCEPTION
     )
