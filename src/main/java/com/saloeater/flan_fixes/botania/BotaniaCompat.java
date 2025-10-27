@@ -19,10 +19,10 @@ public class BotaniaCompat {
             return false;
         }
 
-        return canPlayerHit(owner, blockPos);
+        return canPlayerInteract(owner, blockPos);
     }
 
-    public static boolean canPlayerHit(ServerPlayer owner, BlockPos blockPos) {
+    public static boolean canPlayerInteract(ServerPlayer owner, BlockPos blockPos) {
         var canHit = ClaimHandler.canInteract(owner, blockPos, BOTANIA);
         if (!canHit) {
             owner.displayClientMessage(PermHelper.simpleColoredText(ConfigHandler.LANG_MANAGER.get("noPermissionSimple"), ChatFormatting.DARK_RED), true);

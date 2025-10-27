@@ -37,7 +37,7 @@ public class ManaBurstEntityHelper {
         if (player == null) {
             return !ManaBurstEntityHelper.isClaimExist(pos, level);
         }
-        return BotaniaCompat.canPlayerHit(player, pos);
+        return BotaniaCompat.canPlayerInteract(player, pos);
     }
 
     public static boolean evaluateCanHitByUUID(Level world, BlockPos pos, UUID ownerID) {
