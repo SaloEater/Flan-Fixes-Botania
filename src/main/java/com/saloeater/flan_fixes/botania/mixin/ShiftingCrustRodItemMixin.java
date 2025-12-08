@@ -92,6 +92,7 @@ public abstract class ShiftingCrustRodItemMixin {
             return;
         }
 
-        coordsList.removeIf(blockPos -> MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, world.getBlockState(blockPos), owner)));
+        var player = owner;
+        coordsList.removeIf(blockPos -> MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, world.getBlockState(blockPos), player)));
     }
 }
